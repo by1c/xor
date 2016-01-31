@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mnXorTest", "mnXorTest.vcxproj", "{E4D8A792-7D63-4889-B7A3-4F939F1D07A9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mnXor", "..\mnXor\mnXor.vcxproj", "{F72F2C35-7D71-4634-ADA1-495A132FBB1E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E4D8A792-7D63-4889-B7A3-4F939F1D07A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4D8A792-7D63-4889-B7A3-4F939F1D07A9}.Debug|Win32.Build.0 = Debug|Win32
+		{E4D8A792-7D63-4889-B7A3-4F939F1D07A9}.Release|Win32.ActiveCfg = Release|Win32
+		{E4D8A792-7D63-4889-B7A3-4F939F1D07A9}.Release|Win32.Build.0 = Release|Win32
+		{F72F2C35-7D71-4634-ADA1-495A132FBB1E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F72F2C35-7D71-4634-ADA1-495A132FBB1E}.Debug|Win32.Build.0 = Debug|Win32
+		{F72F2C35-7D71-4634-ADA1-495A132FBB1E}.Release|Win32.ActiveCfg = Release|Win32
+		{F72F2C35-7D71-4634-ADA1-495A132FBB1E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
