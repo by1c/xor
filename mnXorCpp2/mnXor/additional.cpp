@@ -41,6 +41,9 @@ namespace Additional{
 					if(primes[i]<n){m=primes[i-1];break;}
 				}
 			}
+			if((pos==m)){
+				if(m<(int)primes[0]){m=primes[0];}
+			}
 			if(n<m){
 				int _nx=pos,_my=m,t=0,ii=0;
 				if(pos==0)_nx=93;
@@ -48,6 +51,7 @@ namespace Additional{
 					q[ii]=(int)(_nx/_my);
 					t=_nx%_my;
 					if(t==1)break;
+					if(t==0)return n;
 					_nx=_my;_my=t;
 				}
 				_nx=1;_my=0;
@@ -79,6 +83,9 @@ namespace Additional{
 					if(primes[i]<(unsigned int)n){m=primes[i-1];break;}
 				}
 			}
+			if((pos==m)){
+				if(m<(int)primes[0]){m=primes[0];}
+			}
 			if(n<m){
 				int _nx=pos,_my=m,t=0,ii=0;
 				if(pos==0)_nx=93;
@@ -86,6 +93,7 @@ namespace Additional{
 					q[ii]=(int)(_nx/_my);
 					t=_nx%_my;
 					if(t==1)break;
+					if(t==0)return n;
 					_nx=_my;_my=t;
 				}
 				_nx=1;_my=0;
