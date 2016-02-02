@@ -20,6 +20,12 @@
 #define FIX3 2048
 #define FIX4 4096
 
+inline size_t getSize(FILE* fp){
+	fseek(fp, 0L, SEEK_END);
+	long sz = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+	return sz;
+};
 inline bool checkLen(char const *ch,int const &iLen){
 	if((ch)&&(iLen>0)){if(iLen<=(int)std::strlen(ch))return true;}
 	return false;
@@ -35,12 +41,6 @@ inline bool checkLen(char const **ch,int const &iLen){
 		}
 	}
 	return true;
-};
-inline size_t checkSize(FILE* fp){
-	fseek(fp, 0L, SEEK_END);
-	long sz = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-	return sz;
 };
 inline bool checkLen(wchar_t const **wch,int const &iLen){
 	if((wch) && (iLen>0)){
@@ -108,7 +108,7 @@ int myXor::pFileCrypt(FILE *_fd,FILE *_fdk,FILE *_fdo){
 			unsigned char d1,d2;
 			unsigned char *p1,*p2;
 			int fix=FIX1,len=0,len2=0;
-			size_t fileLen=checkSize(_fd);
+			size_t fileLen=getSize(_fd);
 
 			if(fileLen>0xA000){fix=FIX4;}
 			else if(fileLen>0x5000){fix=FIX3;}
