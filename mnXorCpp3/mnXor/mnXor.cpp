@@ -11,10 +11,14 @@
 #include "stdafx.h"
 #include <iostream>
 
-
 #include "mnXor.h"
 #include "garbage.h"
 #include "additional.h"
+
+#define FIX1 64
+#define FIX2 1024
+#define FIX3 2048
+#define FIX4 4096
 
 inline bool checkLen(char const *ch,int const &iLen){
 	if((ch)&&(iLen>0)){if(iLen<=(int)std::strlen(ch))return true;}
@@ -32,6 +36,12 @@ inline bool checkLen(char const **ch,int const &iLen){
 	}
 	return true;
 };
+inline size_t checkSize(FILE* fp){
+	fseek(fp, 0L, SEEK_END);
+	long sz = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+	return sz;
+};
 inline bool checkLen(wchar_t const **wch,int const &iLen){
 	if((wch) && (iLen>0)){
 		for(int i=0;i<iLen;i++){
@@ -40,20 +50,17 @@ inline bool checkLen(wchar_t const **wch,int const &iLen){
 	}
 	return true;
 };
-inline size_t checkSize(FILE* fp){
-	fseek(fp, 0L, SEEK_END);
-	long sz = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-	return sz;
-};
 class myXor{
 private:
 	myXor(const myXor &obj);
 	myXor& operator=(const myXor&){}	
-private:
+private:	
 	int pFileCrypt(FILE *_fd,FILE *_fdk,FILE *_fdo);
+	bool pSetBuffer(FILE *f1,unsigned char *b,int &l1,const int &l2);
+
 	void pOutText(const errno_t &cE,const char *const cFileName);
 	void pOutText(const errno_t &cE,const wchar_t *const cFileName);
+	
 	int pXOrEncryptDecrypt(const char **cSrc,const int &iLent);
 	int pXOrEncryptDecrypt(const wchar_t **wcSrc,const int &iLen);	
 public:
@@ -72,6 +79,27 @@ void myXor::pOutText(const errno_t &cE,const char *const cFileName){
 void myXor::pOutText(const errno_t &cE,const wchar_t *const cFileName){
 	std::wcout<<L"Error: "<<cE<<L" - "<<cFileName<<L": File was not opened"<<std::endl;
 }
+bool myXor::pSetBuffer(FILE *f1,unsigned char *b,int &l1,const int &l2){
+	while(l1<l2){
+		unsigned char *buff1=new unsigned char[l2+1];
+		unsigned char *buff2=new unsigned char[l2+1];
+		memset(buff1,0,l2+1);memset(buff2,0,l2+1);
+		memcpy(buff1,b,l1);
+
+		fseek(f1,0L,SEEK_SET);
+		int is=fread(buff2,sizeof(unsigned char),l2-l1,f1);
+
+		memcpy(&buff1[l1],buff2,is);
+		memcpy(b,buff1,l2);
+
+		delete [] buff2;
+		delete [] buff1;
+
+		l1+=is;
+		if(l1==l2)return true;		
+	}
+	return false;
+}
 int myXor::pFileCrypt(FILE *_fd,FILE *_fdk,FILE *_fdo){
 	int ret=-1;
 	try{
@@ -79,36 +107,23 @@ int myXor::pFileCrypt(FILE *_fd,FILE *_fdk,FILE *_fdo){
 			int counter=0;
 			unsigned char d1,d2;
 			unsigned char *p1,*p2;
-			int fix=64,len=0,len2=0;
-			//size_t m=checkSize(fdk);
-			//size_t fileLen=checkSize(_fd);
+			int fix=FIX1,len=0,len2=0;
+			size_t fileLen=checkSize(_fd);
+
+			if(fileLen>0xA000){fix=FIX4;}
+			else if(fileLen>0x5000){fix=FIX3;}
+			else if(fileLen>0x2800){fix=FIX2;}
 
 			unsigned char *buffer1=new unsigned char[fix+1];
 			unsigned char *buffer2=new unsigned char[fix+1];
-			memset(buffer1,0,(fix+1)*sizeof(unsigned char));
-			memset(buffer2,0,(fix+1)*sizeof(unsigned char));
+			memset(buffer1,0,(fix+1));memset(buffer2,0,(fix+1));
 
 			if((buffer1)&&(buffer2)){
 				while((len=fread(buffer1,sizeof(char),fix,_fd))){
 					len2=fread(buffer2,sizeof(char),fix,_fdk);
 					if(len2<fix){
-						while(len2<fix){
-							unsigned char *buff1=new unsigned char[fix+1];
-							unsigned char *buff2=new unsigned char[fix+1];
-							memset(buff1,0,fix+1);
-							memset(buff2,0,fix+1);
-							memcpy(buff1,buffer2,len2);
-
-							fseek(_fdk,0L,SEEK_SET);							
-							int is=fread(buff2,sizeof(unsigned char),fix-len2,_fdk);
-
-							memcpy(&buff1[len2],buff2,is);
-							memcpy(buffer2,buff1,64);
-							
-							delete [] buff2;
-							delete [] buff1;
-							
-							len2+=is;
+						if(pSetBuffer(_fdk,buffer2,len2,fix)){
+							buffer2[fix]=0;
 						}
 					}
 					int i=0;
